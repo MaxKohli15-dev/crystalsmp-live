@@ -1,4 +1,4 @@
-# CrystalSMP Live-Dashboard
+# CrystalSMP – Website & Live-Status
 
 Live-Status des CrystalSMP-Minecraft-Servers (Spieler online, TPS, Verlauf, Live-Feed).
 

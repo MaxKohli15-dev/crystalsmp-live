@@ -599,7 +599,7 @@
     renderChart(s.history);
   }
 
-  let playerKey = '';
+  let playerKey = null;
   function renderPlayers(list) {
     const k = list.map(p => p.uuid + p.rank).join('|');
     if (k === playerKey) {

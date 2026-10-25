@@ -331,16 +331,35 @@
     repo: location.pathname.split('/').filter(Boolean)[0] || location.hostname
   } : null;
   let API = '';
+  async function readApiConfig(url, viaGithubApi) {
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    return viaGithubApi ? JSON.parse(atob(d.content.replace(/\n/g, ''))) : d;
+  }
   async function discoverApi() {
     if (!GH) return true;
-    try {
-      // GitHub-API statt der Pages-Datei, weil Pages bis zu 10 Minuten zwischenspeichert
-      const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/api.json?t=${Date.now()}`, { cache: 'no-store' });
-      const d = await r.json();
-      const cfg = JSON.parse(atob(d.content.replace(/\n/g, '')));
-      if (cfg.api && cfg.api !== API) { API = cfg.api.replace(/\/$/, ''); return true; }
-      return !!API;
-    } catch { return false; }
+    // 1) api.json direkt von GitHub Pages (kein Limit; ?t= umgeht den Zwischenspeicher)
+    // 2) Fallback GitHub-API (aktueller, aber max. 60 Abrufe pro Stunde und IP)
+    const sources = [
+      [`api.json?t=${Date.now()}`, false],
+      [`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/api.json?t=${Date.now()}`, true]
+    ];
+    for (const [url, viaApi] of sources) {
+      try {
+        const cfg = await readApiConfig(url, viaApi);
+        const api = (cfg.api || '').replace(/\/$/, '');
+        if (!api) continue;
+        if (api !== API) {
+          // Nur uebernehmen, wenn der Server dort auch antwortet (Pages kann kurz noch die alte Adresse haben)
+          const test = await fetch(api + '/api/status', { cache: 'no-store' }).then(r => r.ok).catch(() => false);
+          if (!test) continue;
+          API = api;
+        }
+        return true;
+      } catch {}
+    }
+    return !!API;
   }
   let status = null, lastEvent = 0, lastAdmin = 0, lastOk = 0, adminFilter = 'alle';
   const adminEvents = [];

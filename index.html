@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CrystalSMP Live</title>
+<link rel="icon" href="img/end_crystal.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #2a2e34;
+    --bg-deep: #1f2328;
+    --card: #343940;
+    --card-2: #3b4148;
+    --line: #454c55;
+    --fg: #eceef1;
+    --muted: #a3abb5;
+    --accent: #a66bff;
+    --accent-deep: #6f3fd1;
+    --live: #6cc644;
+    --warn: #f2b45c;
+    --bad: #f0676a;
+    --gold: #ffcf4a;
+    --font-ui: "Ubuntu", system-ui, sans-serif;
+    --font-pixel: "Pixelify Sans", "Ubuntu", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-ui);
+    font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { image-rendering: pixelated; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- Kopfzeile ---------- */
+  header {
+    background-color: var(--bg-deep);
+    background-image:
+      linear-gradient(45deg, rgba(255,255,255,.025) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.025) 75%),
+      linear-gradient(45deg, rgba(255,255,255,.025) 25%, transparent 25%, transparent 75%, rgba(255,255,255,.025) 75%);
+    background-size: 24px 24px; background-position: 0 0, 12px 12px;
+    border-bottom: 1px solid #15181b;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .topbar { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-logo {
+    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px;
+    background: radial-gradient(circle at 50% 40%, #4b2a86, #1d1230 70%); box-shadow: inset 0 0 0 2px #7a52c7;
+  }
+  .brand-logo img { width: 30px; height: 30px; }
+  .brand-name { font-weight: 700; font-size: 20px; letter-spacing: .02em; line-height: 1.1; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .brand-sub b { color: var(--accent); font-weight: 700; }
+  nav { margin-left: auto; display: flex; gap: 22px; align-items: center; }
+  nav a { font-weight: 700; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: #d9dde2; padding: 6px 0; border-bottom: 2px solid transparent; }
+  nav a:hover, nav a.on { color: var(--accent); border-color: var(--accent); }
+  .btn-white {
+    background: #fff; color: #1d2025; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
+    border: 0; border-radius: 6px; padding: 9px 14px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center;
+  }
+  .btn-white:hover { background: #e9e3f7; }
+  .subbar { display: flex; align-items: center; gap: 14px; height: 40px; border-top: 1px solid rgba(255,255,255,.05); }
+  .online-label { color: var(--gold); font-weight: 700; font-size: 13px; letter-spacing: .03em; }
+  .digits { display: flex; gap: 3px; }
+  .digits span {
+    width: 17px; height: 21px; background: #f4f4f4; color: #1d2025; display: grid; place-items: center;
+    font-weight: 700; font-size: 13px; border-radius: 2px; box-shadow: inset 0 -2px 0 #c9c9c9;
+  }
+  .live-pill { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 rgba(108,198,68,.6); animation: pulse 1.6s infinite; }
+  .dot.off { background: var(--bad); animation: none; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(108,198,68,.55); } 70% { box-shadow: 0 0 0 8px rgba(108,198,68,0); } 100% { box-shadow: 0 0 0 0 rgba(108,198,68,0); } }
+
+  /* ---------- Pixel-Ecken (wie in der Referenz) ---------- */
+  .pix { position: relative; }
+  .pix::before, .pix::after { content: ""; position: absolute; width: 38px; height: 38px; pointer-events: none; z-index: 2; }
+  .pix::before { top: -14px; right: -14px; background: linear-gradient(225deg, var(--accent) 50%, var(--accent-deep) 50%); clip-path: polygon(0 0, 100% 0, 100% 100%, 64% 100%, 64% 36%, 0 36%); }
+  .pix::after { bottom: -14px; left: -14px; background: linear-gradient(45deg, var(--accent) 50%, var(--accent-deep) 50%); clip-path: polygon(0 0, 36% 0, 36% 64%, 100% 64%, 100% 100%, 0 100%); }
+
+  /* ---------- Hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.55fr 1fr; gap: 28px; margin: 40px auto 0; align-items: stretch; }
+  .hero-main {
+    border-radius: 10px; overflow: hidden; min-height: 330px; padding: 28px;
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(166,107,255,.45), transparent 55%),
+      radial-gradient(ellipse at 10% 90%, rgba(80,200,220,.25), transparent 60%),
+      linear-gradient(160deg, #3a2468, #1c1a33 55%, #12202b);
+    display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 18px 40px rgba(0,0,0,.35);
+  }
+  .hero-main .crystal { position: absolute; right: 26px; top: 40px; width: 150px; height: 150px; opacity: .95; filter: drop-shadow(0 0 30px rgba(190,140,255,.7)); animation: float 5s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-10px) rotate(4deg); } }
+  .status-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,.35); padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; width: fit-content; }
+  .big-count { font-family: var(--font-pixel); font-weight: 700; font-size: clamp(64px, 12vw, 116px); line-height: .9; margin-top: 18px; text-shadow: 0 6px 0 rgba(0,0,0,.3); font-variant-numeric: tabular-nums; }
+  .big-count small { font-size: .32em; color: #cfc4e8; margin-left: 8px; }
+  .hero-label { font-family: var(--font-pixel); font-size: 22px; color: #e6dcff; margin-top: 4px; }
+  .motd { color: #cdd3da; font-size: 14px; margin-top: 10px; max-width: 520px; }
+  .join-box { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .mc-btn {
+    font-family: var(--font-pixel); font-size: 15px; color: #fff; cursor: pointer; padding: 9px 16px;
+    background: linear-gradient(#8a8a8a, #6b6b6b); border: 2px solid #1b1b1b; box-shadow: inset 2px 2px 0 #b5b5b5, inset -2px -2px 0 #4a4a4a;
+    text-shadow: 2px 2px 0 #3a3a3a; display: inline-flex; gap: 10px; align-items: center;
+  }
+  .mc-btn:hover { background: linear-gradient(#9a8ec2, #6f5fa8); }
+  .mc-btn .lbl { font-size: 11px; color: #e9e9e9; opacity: .85; }
+
+  .welcome { display: flex; flex-direction: column; justify-content: flex-end; }
+  .welcome-card { background: #3a4047; border-radius: 10px; padding: 26px 22px; text-align: center; box-shadow: 0 14px 30px rgba(0,0,0,.3); }
+  .welcome-card h2 { margin: 0 0 10px; font-size: 21px; }
+  .welcome-card p { margin: 0 0 16px; color: #d5d9de; font-size: 14px; }
+  .btn-accent { background: var(--live); color: #fff; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; padding: 9px 14px; border-radius: 6px; border: 0; cursor: pointer; }
+  .btn-accent:hover { filter: brightness(1.08); }
+  .welcome-art { display: flex; justify-content: center; gap: 8px; margin-bottom: -6px; position: relative; z-index: 1; }
+  .welcome-art img { width: 64px; height: 64px; filter: drop-shadow(0 8px 12px rgba(0,0,0,.4)); }
+
+  /* ---------- Abschnitte ---------- */
+  section { margin-top: 64px; }
+  .tag {
+    display: inline-block; background: var(--accent); color: #fff; font-weight: 700; font-size: 13px; padding: 4px 10px 4px 10px;
+    position: relative; margin-bottom: 14px;
+  }
+  .tag::before { content: ""; position: absolute; top: -6px; left: 0; width: 6px; height: 6px; background: var(--accent); }
+  .tag::after { content: ""; position: absolute; top: -12px; left: 6px; width: 6px; height: 6px; background: var(--accent); opacity: .6; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .section-head .hint { color: var(--muted); font-size: 13px; }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .stat { background: var(--card); border-radius: 8px; padding: 16px; border-bottom: 3px solid var(--line); }
+  .stat .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+  .stat .v { font-family: var(--font-pixel); font-size: 30px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .stat .s { color: var(--muted); font-size: 12px; }
+  .stat.good { border-color: var(--live); } .stat.mid { border-color: var(--warn); } .stat.low { border-color: var(--bad); }
+  .bar { height: 6px; background: #262a2f; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .6s; }
+
+  /* Spieler-Kacheln wie die Spielmodus-Kacheln der Referenz */
+  .players { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .ptile {
+    position: relative; height: 230px; border-radius: 6px; overflow: hidden; background: linear-gradient(180deg, #4a3a74, #2b2f3a 70%);
+    box-shadow: 0 8px 18px rgba(0,0,0,.3); transition: transform .2s; animation: pop .35s ease-out;
+  }
+  .ptile:hover { transform: translateY(-4px); }
+  @keyframes pop { from { opacity: 0; transform: scale(.94); } }
+  .ptile img.body { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); height: 170px; image-rendering: auto; filter: drop-shadow(0 8px 10px rgba(0,0,0,.45)); }
+  .ptile .shade { position: absolute; inset: auto 0 0 0; height: 90px; background: linear-gradient(transparent, rgba(0,0,0,.75)); }
+  .ptile .pname { position: absolute; left: 0; right: 0; bottom: 30px; text-align: center; font-family: var(--font-pixel); font-size: 19px; text-shadow: 2px 2px 0 #000; padding: 0 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ptile .meta { position: absolute; left: 0; right: 0; bottom: 9px; display: flex; justify-content: center; gap: 6px; font-size: 11px; }
+  .rank { padding: 1px 7px; border-radius: 4px; font-weight: 700; background: rgba(0,0,0,.5); }
+  .ping { color: #cfd5db; background: rgba(0,0,0,.5); padding: 1px 6px; border-radius: 4px; }
+  .badge-bedrock { position: absolute; top: 8px; left: 8px; background: #2e8b7f; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+  .empty { background: var(--card); border-radius: 8px; padding: 34px; text-align: center; color: var(--muted); }
+  .empty img { width: 48px; height: 48px; opacity: .8; display: block; margin: 0 auto 10px; }
+
+  .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .chart { background: var(--card); border-radius: 8px; padding: 16px; }
+  .chart h3 { margin: 0 0 6px; font-size: 14px; display: flex; justify-content: space-between; }
+  .chart h3 span { color: var(--muted); font-weight: 400; }
+  .chart svg { width: 100%; height: 150px; display: block; }
+  .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 8px; overflow: hidden; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; background: var(--card-2); }
+  td.n { font-variant-numeric: tabular-nums; text-align: right; }
+  th.n { text-align: right; }
+
+  .feed { background: var(--card); border-radius: 8px; padding: 6px; max-height: 360px; overflow-y: auto; }
+  .ev { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 6px; font-size: 14px; animation: slide .3s ease-out; }
+  .ev:nth-child(odd) { background: rgba(255,255,255,.025); }
+  @keyframes slide { from { opacity: 0; transform: translateX(-8px); } }
+  .ev .ico { width: 22px; height: 22px; flex: none; border-radius: 4px; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+  .ev .txt { flex: 1; word-break: break-word; }
+  .ev time { color: var(--muted); font-size: 12px; flex: none; font-variant-numeric: tabular-nums; }
+  .t-join .ico { background: rgba(108,198,68,.2); color: var(--live); }
+  .t-quit .ico { background: rgba(255,255,255,.08); color: var(--muted); }
+  .t-death .ico, .t-kill .ico { background: rgba(240,103,106,.18); color: var(--bad); }
+  .t-kauf .ico { background: rgba(255,207,74,.18); color: var(--gold); }
+  .t-chat .ico { background: rgba(166,107,255,.2); color: var(--accent); }
+  .t-anticheat .ico, .t-kick .ico { background: rgba(240,103,106,.2); color: var(--bad); }
+  .t-befehl .ico { background: rgba(80,160,240,.2); color: #7db8f5; }
+  .t-warnung .ico, .t-chatfilter .ico { background: rgba(242,180,92,.2); color: var(--warn); }
+
+  /* Admin */
+  #admin { display: none; }
+  .admin-box { border: 1px dashed #6a4c9c; border-radius: 10px; padding: 18px; background: rgba(166,107,255,.05); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .chip { background: var(--card); border: 1px solid var(--line); color: var(--fg); border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .chip.on { background: var(--accent); border-color: var(--accent); }
+  .admin-box .feed { max-height: 460px; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+
+  footer { margin: 70px 0 30px; color: var(--muted); font-size: 12px; text-align: center; }
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px); background: #fff; color: #1d2025; font-weight: 700; padding: 10px 16px; border-radius: 6px; transition: transform .25s; z-index: 50; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) {
+    nav a:not(.keep) { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .charts, .two { grid-template-columns: 1fr; }
+    .hero-main .crystal { width: 96px; height: 96px; top: 24px; right: 18px; }
+  }
+  @media (max-width: 520px) {
+    .brand-sub { display: none; }
+    .btn-white span.long { display: none; }
+    .players { grid-template-columns: repeat(2, 1fr); }
+    .pix::before, .pix::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topbar">
+    <a class="brand" href="#">
+      <div class="brand-logo"><img src="img/end_crystal.png" alt=""></div>
+      <div>
+        <div class="brand-name" id="srvName">CRYSTALSMP</div>
+        <div class="brand-sub">Jetzt spielen: <b id="srvAddrTop">…</b></div>
+      </div>
+    </a>
+    <nav>
+      <a href="#status" class="on">Status</a>
+      <a href="#spieler">Spieler</a>
+      <a href="#verlauf">Verlauf</a>
+      <a href="#feed">Live-Feed</a>
+      <button class="btn-white keep" id="copyTop" type="button">⧉ <span class="long">IP&nbsp;</span>kopieren</button>
+    </nav>
+  </div>
+  <div class="wrap subbar">
+    <span class="online-label">SPIELER ONLINE</span>
+    <div class="digits" id="digits"></div>
+    <div class="live-pill"><span class="dot" id="liveDot"></span><span id="liveText">verbinde…</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero" id="status">
+    <div class="hero-main pix">
+      <img class="crystal" src="img/end_crystal.png" alt="">
+      <div>
+        <span class="status-tag"><span class="dot" id="heroDot"></span><span id="heroState">Verbinde…</span></span>
+        <div class="big-count"><span id="count">–</span><small>/ <span id="max">–</span></small></div>
+        <div class="hero-label">Spieler gerade online</div>
+        <div class="motd" id="motd"></div>
+      </div>
+      <div class="join-box">
+        <button class="mc-btn" data-copy="java" type="button"><span>Java</span><span class="lbl" id="javaAddr">…</span></button>
+        <button class="mc-btn" data-copy="bedrock" type="button"><span>Bedrock</span><span class="lbl" id="bedrockAddr">…</span></button>
+      </div>
+    </div>
+    <div class="welcome">
+      <div class="welcome-art">
+        <img src="img/amethyst_shard.png" alt=""><img src="img/totem_of_undying.png" alt=""><img src="img/diamond.png" alt="">
+      </div>
+      <div class="welcome-card">
+        <h2>Heyho Kristallfreund! 👋</h2>
+        <p id="welcomeText">Hier siehst du live, was auf dem Server los ist – wer gerade spielt, wie flüssig er läuft und was zuletzt passiert ist.</p>
+        <button class="btn-accent" data-copy="java" type="button">Wie kann ich joinen?</button>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="section-head"><span class="tag">Server-Werte</span><span class="hint">aktualisiert jede Sekunde</span></div>
+    <div class="stats">
+      <div class="stat" id="stTps"><div class="k">TPS</div><div class="v" id="tps">–</div><div class="s" id="tpsSub">1 / 5 / 15 min</div></div>
+      <div class="stat"><div class="k">Tick-Zeit</div><div class="v" id="mspt">–</div><div class="s">ms pro Tick (max. 50)</div></div>
+      <div class="stat"><div class="k">Arbeitsspeicher</div><div class="v" id="ram">–</div><div class="bar"><i id="ramBar" style="width:0"></i></div></div>
+      <div class="stat"><div class="k">Online seit</div><div class="v" id="uptime">–</div><div class="s" id="version">Version –</div></div>
+      <div class="stat"><div class="k">Rekord heute</div><div class="v" id="peak">–</div><div class="s">Spieler gleichzeitig</div></div>
+    </div>
+  </section>
+
+  <section id="spieler">
+    <div class="section-head"><span class="tag">Spieler online</span><span class="hint" id="playersHint"></span></div>
+    <div class="players" id="players"></div>
+  </section>
+
+  <section id="verlauf">
+    <div class="section-head"><span class="tag">Verlauf</span><span class="hint">letzte Stunde</span></div>
+    <div class="charts">
+      <div class="chart"><h3>Spieler <span id="chPlayersNow"></span></h3><svg id="chPlayers" viewBox="0 0 400 150" preserveAspectRatio="none"></svg><div class="axis"><span id="chFrom">–</span><span>jetzt</span></div></div>
+      <div class="chart"><h3>TPS <span id="chTpsNow"></span></h3><svg id="chTps" viewBox="0 0 400 150" preserveAspectRatio="none"></svg><div class="axis"><span id="chFrom2">–</span><span>jetzt</span></div></div>
+    </div>
+  </section>
+
+  <section id="feed">
+    <div class="two">
+      <div>
+        <div class="section-head"><span class="tag">Welten</span></div>
+        <table>
+          <thead><tr><th>Welt</th><th class="n">Spieler</th><th class="n">Chunks</th><th class="n">Entities</th></tr></thead>
+          <tbody id="worlds"></tbody>
+        </table>
+      </div>
+      <div>
+        <div class="section-head"><span class="tag">Live-Feed</span><span class="hint">Joins, Kills, Rang-Käufe</span></div>
+        <div class="feed" id="events"><div class="ev"><span class="txt" style="color:var(--muted)">Noch nichts passiert …</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="admin">
+    <div class="section-head"><span class="tag">Admin · Konsole &amp; Anticheat</span><span class="hint">nur mit Admin-Key sichtbar</span></div>
+    <div class="admin-box">
+      <div class="chips" id="chips"></div>
+      <div class="feed" id="adminEvents"></div>
+    </div>
+  </section>
+
+  <footer>CrystalSMP Live-Dashboard · Daten direkt vom Server · <span id="footTime"></span></footer>
+</main>
+
+<div class="toast" id="toast">Kopiert!</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const key = new URLSearchParams(location.search).get('key');
+
+  // Woher kommen die Live-Daten?
+  //  - direkt vom Plugin (localhost:8123 oder Tunnel): gleiche Adresse -> API = ''
+  //  - auf GitHub Pages: aktuelle Tunnel-Adresse steht in api.json im Repo (traegt der Watchdog ein)
+  const GH = location.hostname.endsWith('github.io') ? {
+    owner: location.hostname.split('.')[0],
+    repo: location.pathname.split('/').filter(Boolean)[0] || location.hostname
+  } : null;
+  let API = '';
+  async function discoverApi() {
+    if (!GH) return true;
+    try {
+      // GitHub-API statt der Pages-Datei, weil Pages bis zu 10 Minuten zwischenspeichert
+      const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/api.json?t=${Date.now()}`, { cache: 'no-store' });
+      const d = await r.json();
+      const cfg = JSON.parse(atob(d.content.replace(/\n/g, '')));
+      if (cfg.api && cfg.api !== API) { API = cfg.api.replace(/\/$/, ''); return true; }
+      return !!API;
+    } catch { return false; }
+  }
+  let status = null, lastEvent = 0, lastAdmin = 0, lastOk = 0, adminFilter = 'alle';
+  const adminEvents = [];
+
+  const ICON = { join: '+', quit: '−', death: '☠', kill: '⚔', kauf: '★', chat: '✉', anticheat: '!', kick: '⛔', befehl: '/', warnung: '⚠', chatfilter: '✎' };
+  const ADMIN_TYPES = ['alle', 'anticheat', 'kick', 'befehl', 'chat', 'chatfilter', 'warnung'];
+  const ADMIN_LABEL = { alle: 'Alles', anticheat: 'Anticheat', kick: 'Kicks', befehl: 'Befehle', chat: 'Chat', chatfilter: 'Chatfilter', warnung: 'Warnungen' };
+
+  const fmtTime = t => new Date(t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const fmtUptime = s => {
+    const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    return d > 0 ? `${d}d ${h}h` : h > 0 ? `${h}h ${m}m` : `${m}m ${s % 60}s`;
+  };
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+  async function copy(text, label) {
+    try { await navigator.clipboard.writeText(text); toast(`${label} kopiert: ${text}`); }
+    catch { prompt('Adresse kopieren:', text); }
+  }
+  document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+    if (!status) return;
+    const which = b.dataset.copy;
+    copy(which === 'bedrock' ? status.bedrock : status.java, which === 'bedrock' ? 'Bedrock-Adresse' : 'Java-Adresse');
+  }));
+  $('copyTop').addEventListener('click', () => status && copy(status.java, 'Java-Adresse'));
+
+  function setDigits(n) {
+    const s = String(Math.max(0, n)).padStart(4, '0');
+    const box = $('digits');
+    if (box.textContent === s) return;
+    box.replaceChildren(...[...s].map(c => el('span', null, c)));
+  }
+
+  function setLive(ok) {
+    $('liveDot').classList.toggle('off', !ok);
+    $('heroDot').classList.toggle('off', !ok);
+    $('heroState').textContent = ok ? 'Server online' : 'Server nicht erreichbar';
+  }
+
+  // ---------- Status ----------
+  function renderStatus(s) {
+    status = s;
+    document.title = `${s.name} Live · ${s.online} online`;
+    $('srvName').textContent = s.name.toUpperCase();
+    $('srvAddrTop').textContent = s.java;
+    $('javaAddr').textContent = s.java;
+    $('bedrockAddr').textContent = s.bedrock;
+    $('count').textContent = s.online;
+    $('max').textContent = s.max;
+    $('motd').textContent = s.motd;
+    setDigits(s.online);
+
+    const tps = s.tps[0];
+    $('tps').textContent = tps.toFixed(1);
+    $('tpsSub').textContent = s.tps.map(v => v.toFixed(1)).join(' / ') + '  (1/5/15 min)';
+    $('stTps').className = 'stat ' + (tps >= 19 ? 'good' : tps >= 15 ? 'mid' : 'low');
+    $('mspt').textContent = s.mspt.toFixed(1);
+    $('ram').textContent = (s.ramUsed / 1024).toFixed(1) + ' GB';
+    $('ramBar').style.width = Math.min(100, s.ramUsed / s.ramMax * 100) + '%';
+    $('uptime').textContent = fmtUptime(s.uptime);
+    $('version').textContent = 'Minecraft ' + s.version;
+    $('peak').textContent = s.peak;
+    $('footTime').textContent = 'Stand ' + fmtTime(s.time);
+
+    renderPlayers(s.players);
+    renderWorlds(s.worlds);
+    renderCharts(s.history);
+  }
+
+  let playerKey = '';
+  function renderPlayers(list) {
+    const k = list.map(p => p.uuid + p.rank + p.world).join('|');
+    $('playersHint').textContent = list.length ? `${list.length} Spieler · sortiert nach Rang` : '';
+    // Ping live aktualisieren, Kacheln nur neu bauen, wenn sich Spieler/Rang/Welt aendern
+    if (k === playerKey) {
+      list.forEach(p => { const e = document.querySelector(`[data-ping="${p.uuid}"]`); if (e) e.textContent = p.ping + ' ms'; });
+      return;
+    }
+    playerKey = k;
+    const box = $('players');
+    if (!list.length) {
+      const e = el('div', 'empty');
+      const img = el('img'); img.src = 'img/amethyst_shard.png'; img.alt = '';
+      e.append(img, el('div', null, 'Gerade ist niemand online – sei der Erste!'));
+      box.replaceChildren(e);
+      return;
+    }
+    box.replaceChildren(...list.map(p => {
+      const t = el('div', 'ptile');
+      const img = el('img', 'body');
+      img.alt = p.name; img.loading = 'lazy';
+      img.src = p.bedrock ? 'https://mc-heads.net/body/MHF_Steve/170' : `https://mc-heads.net/body/${p.uuid}/170`;
+      img.onerror = () => { img.onerror = null; img.src = 'https://mc-heads.net/body/MHF_Steve/170'; };
+      t.append(img, el('div', 'shade'));
+      if (p.bedrock) t.append(el('span', 'badge-bedrock', 'Bedrock'));
+      t.append(el('div', 'pname', p.name));
+      const meta = el('div', 'meta');
+      const r = el('span', 'rank', p.rank); r.style.color = p.rankColor;
+      const ping = el('span', 'ping', p.ping + ' ms'); ping.dataset.ping = p.uuid;
+      meta.append(r, ping);
+      t.append(meta);
+      t.title = `${p.name} · ${p.rank} · Welt: ${p.world}`;
+      return t;
+    }));
+  }
+
+  function renderWorlds(ws) {
+    $('worlds').replaceChildren(...ws.map(w => {
+      const tr = el('tr');
+      tr.append(el('td', null, w.name), el('td', 'n', w.players), el('td', 'n', w.chunks.toLocaleString('de-DE')), el('td', 'n', w.entities.toLocaleString('de-DE')));
+      return tr;
+    }));
+  }
+
+  // ---------- Diagramme (SVG ohne Bibliothek) ----------
+  function line(svg, values, maxY, color, id) {
+    const W = 400, H = 150, pad = 6;
+    if (values.length < 2) { svg.innerHTML = '<text x="200" y="80" fill="#a3abb5" font-size="13" text-anchor="middle">Sammle Daten … (alle 10 s ein Punkt)</text>'; return; }
+    const xs = i => i / (values.length - 1) * W;
+    const ys = v => H - pad - (v / maxY) * (H - pad * 2);
+    const pts = values.map((v, i) => `${xs(i).toFixed(1)},${ys(v).toFixed(1)}`);
+    const grid = [0.25, 0.5, 0.75].map(f => `<line x1="0" x2="${W}" y1="${(H * f).toFixed(0)}" y2="${(H * f).toFixed(0)}" stroke="#454c55" stroke-dasharray="3 5" vector-effect="non-scaling-stroke"/>`).join('');
+    svg.innerHTML = `<defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".45"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+      ${grid}
+      <polygon points="0,${H} ${pts.join(' ')} ${W},${H}" fill="url(#g${id})"/>
+      <polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+  }
+  function renderCharts(h) {
+    const maxP = Math.max(5, ...h.players) * 1.15;
+    line($('chPlayers'), h.players, maxP, '#a66bff', 'p');
+    line($('chTps'), h.tps, 20, '#6cc644', 't');
+    $('chPlayersNow').textContent = h.players.length ? `max. ${Math.max(...h.players)}` : '';
+    $('chTpsNow').textContent = h.tps.length ? `min. ${Math.min(...h.tps).toFixed(1)}` : '';
+    const from = h.t.length ? 'vor ' + Math.round((Date.now() - h.t[0]) / 60000) + ' min' : '–';
+    $('chFrom').textContent = from; $('chFrom2').textContent = from;
+  }
+
+  // ---------- Feeds ----------
+  function evNode(e) {
+    const row = el('div', 'ev t-' + e.type);
+    row.append(el('span', 'ico', ICON[e.type] || '•'), el('span', 'txt', e.text), el('time', null, fmtTime(e.t)));
+    return row;
+  }
+  function addPublic(events) {
+    if (!events.length) return;
+    const box = $('events');
+    if (lastEvent === 0) box.replaceChildren();
+    events.forEach(e => box.prepend(evNode(e)));
+    while (box.children.length > 80) box.lastChild.remove();
+  }
+  function renderAdmin() {
+    const box = $('adminEvents');
+    const list = adminEvents.filter(e => adminFilter === 'alle' || e.type === adminFilter).slice(-200).reverse();
+    box.replaceChildren(...(list.length ? list.map(evNode) : [el('div', 'ev', 'Noch keine Einträge.')]));
+  }
+  function setupAdmin() {
+    $('admin').style.display = 'block';
+    $('chips').replaceChildren(...ADMIN_TYPES.map(t => {
+      const c = el('button', 'chip' + (t === adminFilter ? ' on' : ''), ADMIN_LABEL[t]);
+      c.type = 'button';
+      c.onclick = () => { adminFilter = t; setupAdmin(); renderAdmin(); };
+      return c;
+    }));
+  }
+
+  // ---------- Live-Schleifen ----------
+  let fails = 0;
+  async function pollStatus() {
+    try {
+      const r = await fetch(API + '/api/status', { cache: 'no-store' });
+      const s = await r.json();
+      if (!s.name) throw new Error('leer');
+      lastOk = Date.now(); fails = 0;
+      setLive(true);
+      renderStatus(s);
+      if (s.lastEvent > lastEvent) pollEvents();
+    } catch {
+      setLive(false);
+      // Auf GitHub Pages: nach Server-Neustart hat der Tunnel evtl. eine neue Adresse -> neu nachschlagen
+      if (GH && ++fails % 15 === 0) discoverApi();
+    }
+  }
+  async function pollEvents() {
+    if (pollEvents.busy) return;   // nie zwei Abfragen gleichzeitig, sonst doppelte Eintraege
+    pollEvents.busy = true;
+    try {
+      const r = await fetch(API + '/api/events?since=' + lastEvent, { cache: 'no-store' });
+      const d = await r.json();
+      const fresh = d.events.filter(e => e.id > lastEvent);
+      addPublic(fresh);
+      if (fresh.length) lastEvent = fresh[fresh.length - 1].id;
+    } catch {} finally { pollEvents.busy = false; }
+  }
+  async function pollAdmin() {
+    try {
+      const r = await fetch(`${API}/api/admin?key=${encodeURIComponent(key)}&since=${lastAdmin}`, { cache: 'no-store' });
+      if (r.status === 403) { toast('Admin-Key ist falsch'); return false; }
+      const d = await r.json();
+      const first = !pollAdmin.started;
+      if (first) { pollAdmin.started = true; setupAdmin(); }
+      if (d.events.length) {
+        adminEvents.push(...d.events);
+        if (adminEvents.length > 600) adminEvents.splice(0, adminEvents.length - 600);
+        lastAdmin = d.events[d.events.length - 1].id;
+      }
+      if (d.events.length || first) renderAdmin();
+      return true;
+    } catch { return true; }
+  }
+
+  setInterval(() => {
+    const ago = lastOk ? Math.round((Date.now() - lastOk) / 1000) : null;
+    $('liveText').textContent = ago === null ? 'verbinde…' : ago <= 2 ? 'LIVE' : `vor ${ago}s aktualisiert`;
+  }, 500);
+
+  discoverApi().then(() => {
+    pollStatus(); pollEvents();
+    setInterval(pollStatus, 1000);
+    setInterval(pollEvents, 3000);
+    // Admin-Bereich nur direkt am Server (nicht ueber GitHub, damit der Key nicht durch fremde Tunnel geht)
+    if (key && !GH) {
+      pollAdmin().then(ok => { if (ok) setInterval(pollAdmin, 2000); });
+    }
+  });
+})();
+</script>
+</body>
+</html>

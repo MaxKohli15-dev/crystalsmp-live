@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CrystalSMP – Dein Crystal-SMP · Launch am 3. November 2026</title>
+<title>CrystalSMP – Dein Crystal-SMP · Launch am 3. November 2026, 16:30 Uhr</title>
 <meta name="description" content="CrystalSMP: Survival, Crystal-PvP, Duelle, Clans und Bedwars für Java und Bedrock. Launch am 3. November 2026 – live sehen, wer gerade online ist.">
 <link rel="icon" href="img/end_crystal.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,11 +55,11 @@
   .brand-sub { font-size: 11px; color: var(--muted); letter-spacing: .03em; }
   .brand-sub b { color: var(--cyan); font-weight: 600; }
   nav { margin-left: auto; display: flex; gap: 4px; align-items: center; }
-  nav a { display: flex; align-items: center; gap: 7px; font-weight: 600; font-size: 14px; color: #cfc9e8; padding: 8px 12px; border-radius: 999px; transition: background .2s, color .2s; }
+  nav a { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 14px; color: #cfc9e8; padding: 8px 10px; white-space: nowrap; border-radius: 999px; transition: background .2s, color .2s; }
   nav a svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
   nav a:hover { color: #fff; background: var(--card-2); }
   nav a.on { color: #fff; background: rgba(166,107,255,.18); box-shadow: inset 0 0 0 1px rgba(166,107,255,.4); }
-  .btn-white { background: var(--grad); color: #fff; font-weight: 700; font-size: 14px; border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; box-shadow: 0 8px 24px rgba(255,107,214,.3); transition: transform .2s, box-shadow .2s; }
+  .btn-white { white-space: nowrap; flex: none; background: var(--grad); color: #fff; font-weight: 700; font-size: 14px; border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; box-shadow: 0 8px 24px rgba(255,107,214,.3); transition: transform .2s, box-shadow .2s; }
   .btn-white:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(255,107,214,.45); }
   .btn-white svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; }
   .subbar { display: flex; align-items: center; gap: 12px; height: 44px; border-top: 1px solid var(--line); }
@@ -305,10 +305,72 @@
   .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(90px); background: rgba(20,16,38,.92); backdrop-filter: blur(10px); border: 1px solid rgba(166,107,255,.45); color: #fff; font-weight: 600; padding: 11px 18px; border-radius: 999px; transition: transform .3s cubic-bezier(.2,.9,.3,1.3); z-index: 60; max-width: calc(100% - 32px); box-shadow: 0 10px 30px rgba(0,0,0,.4); }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ================= Neu: Launch, Karte, Ranglisten, Profil, Team ================= */
+  .row-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-ghost { background: rgba(255,255,255,.08); color: #fff; font-weight: 700; font-size: 13px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 8px 14px; cursor: pointer; transition: background .2s; }
+  .btn-ghost:hover { background: rgba(255,255,255,.16); }
+  .launch-banner { position: sticky; top: 112px; z-index: 25; margin: 12px auto 0; width: fit-content; max-width: calc(100% - 32px); display: flex; gap: 8px; align-items: center; padding: 9px 18px; border-radius: 999px; background: var(--grad); color: #fff; font-size: 14px; box-shadow: 0 10px 30px rgba(255,107,214,.4); animation: pop .6s cubic-bezier(.2,.9,.3,1.4); }
+  .launch-banner a { font-weight: 800; text-decoration: underline; }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } }
+  .launch-banner[hidden] { display: none; }
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 70; display: none; }
+
+  .map-box { position: relative; height: min(70vh, 620px); border-radius: 22px; overflow: hidden; border: 1px solid var(--line); background: #0d0b1a; box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+  .map-box iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .map-off { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; background: radial-gradient(circle at 50% 40%, rgba(166,107,255,.18), transparent 60%), repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 32px), repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 1px, transparent 1px 32px); }
+  .map-off b { display: block; font-size: 20px; margin-bottom: 6px; }
+  .map-off span { color: var(--muted); }
+  .map-full { position: absolute; top: 12px; left: 12px; z-index: 2; background: rgba(15,12,30,.75); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.18); padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+
+  .lb-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; align-items: start; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tabs button { background: rgba(255,255,255,.05); border: 1px solid var(--line); color: #cfc9e8; border-radius: 999px; padding: 6px 13px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .tabs button.on { background: var(--grad); color: #fff; border-color: transparent; }
+  .lb-list { list-style: none; margin: 0; padding: 0; counter-reset: lb; }
+  .lb-list li { counter-increment: lb; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; cursor: pointer; transition: background .15s; }
+  .lb-list li:hover { background: rgba(255,255,255,.05); }
+  .lb-list li::before { content: counter(lb); width: 26px; text-align: center; font-family: var(--font-mc); font-size: 18px; color: var(--muted); }
+  .lb-list li:nth-child(1)::before { content: "🥇"; } .lb-list li:nth-child(2)::before { content: "🥈"; } .lb-list li:nth-child(3)::before { content: "🥉"; }
+  .lb-list img { width: 32px; height: 32px; border-radius: 7px; }
+  .lb-list .n { flex: 1; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb-list .v { font-family: var(--font-mc); font-size: 18px; color: var(--yellow); }
+  .lb-list .lb-empty { cursor: default; color: var(--muted); justify-content: center; }
+  .lb-list .lb-empty::before { content: none; }
+  .search { display: flex; gap: 8px; margin-bottom: 14px; }
+  .search input { flex: 1; min-width: 0; background: rgba(0,0,0,.4); border: 1px solid rgba(255,255,255,.15); border-radius: 999px; padding: 9px 16px; color: #fff; font: inherit; }
+  .search input:focus { outline: 2px solid rgba(166,107,255,.6); }
+  .prof-empty { color: var(--muted); text-align: center; padding: 30px 10px; }
+  .prof { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; }
+  .prof img { width: 130px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(166,107,255,.4)); }
+  .prof h3 { margin: 0; font-size: 24px; font-weight: 800; }
+  .prof .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .prof .on-pill { display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: rgba(74,222,128,.18); color: var(--green); margin-left: 6px; vertical-align: middle; }
+  .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kv div { background: rgba(0,0,0,.28); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; }
+  .kv b { display: block; font-family: var(--font-mc); font-size: 20px; }
+  .kv span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .member { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px 10px 14px; text-align: center; transition: transform .25s, box-shadow .25s; }
+  .member:hover { transform: translateY(-5px); box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  .member img { height: 120px; filter: drop-shadow(0 8px 10px rgba(0,0,0,.4)); }
+  .member b { display: block; margin-top: 6px; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .member span { display: inline-block; margin-top: 4px; font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 999px; background: rgba(0,0,0,.4); }
+  .discord { margin-top: 18px; display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: 22px; background: linear-gradient(120deg, #5865f2, #7a5cff); box-shadow: 0 16px 40px rgba(88,101,242,.35); transition: transform .2s; }
+  .discord:hover { transform: translateY(-3px); }
+  .discord svg { width: 46px; height: 46px; flex: none; }
+  .discord b { display: block; font-size: 19px; }
+  .discord span { opacity: .85; font-size: 14px; }
+  .discord div { flex: 1; }
+  .discord-btn { background: #fff; color: #3b3fbf !important; opacity: 1 !important; font-weight: 800; padding: 9px 16px; border-radius: 999px; flex: none; }
+  @media (max-width: 960px) { .lb-grid { grid-template-columns: 1fr; } .launch-banner { top: 74px; } }
+  @media (max-width: 600px) { .prof { grid-template-columns: 1fr; text-align: center; } .prof img { margin: 0 auto; } .kv { grid-template-columns: repeat(2, 1fr); } .discord-btn { display: none; } .map-box { height: 60vh; } }
+
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .reveal { opacity: 1; transform: none; } }
 
+  @media (max-width: 1100px) { nav a svg { display: none; } }
   @media (max-width: 960px) {
     nav a { display: none; }
     .hero { grid-template-columns: 1fr; gap: 10px; }
@@ -349,6 +411,8 @@
       <a href="#start" class="on"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Startseite</a>
       <a href="#spielmodi"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="12" rx="3"/><path d="M7 11v4M5 13h4M15 12h.01M18 14h.01"/></svg>Spielmodi</a>
       <a href="#live"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>Live</a>
+      <a href="#karte"><svg viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Karte</a>
+      <a href="#ranglisten"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Top</a>
       <a href="#joinen"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Joinen</a>
       <a href="#regeln"><svg viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h5"/></svg>Regeln</a>
     </nav>
@@ -366,9 +430,11 @@
 </header>
 
 <!-- ================= Hero: Slider + Begruessung ================= -->
+<div class="launch-banner" id="launchBanner" hidden><span>🎉</span> <b id="launchBannerText">Heute ist Launch!</b> <a href="#joinen">Jetzt joinen →</a></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
 <div class="hero-bg" id="start">
   <div class="wrap hero-intro reveal">
-    <span class="hero-kicker">💎 Java &amp; Bedrock · Launch am <b>03.11.2026</b></span>
+    <span class="hero-kicker">💎 Java &amp; Bedrock · Launch am <b>03.11.2026 · 16:30 Uhr</b></span>
     <h1 class="hero-title">Willkommen auf<br><span>CrystalSMP</span></h1>
     <p class="hero-lead">Survival, Crystal-PvP, Duelle mit Elo, Clans und Bedwars – alles auf einem Server, fair dank eigenem Anticheat.</p>
   </div>
@@ -388,12 +454,12 @@
             <img class="char render" data-skin="MHF_Alex" data-pose="yaw=30&arms=20" alt="" style="right:6%;height:62%">
           </div>
           <div class="slide-box">
-            <h2>Launch am 03.11.2026</h2>
+            <h2>Launch am 03.11. · 16:30</h2>
             <div class="countdown">
               <div class="cd"><b id="cdD">–</b><span>Tage</span></div><div class="cd"><b id="cdH">–</b><span>Std</span></div>
               <div class="cd"><b id="cdM">–</b><span>Min</span></div><div class="cd"><b id="cdS">–</b><span>Sek</span></div>
             </div>
-            <button class="btn-green" data-copy="java" type="button">Server-IP kopieren</button>
+            <div class="row-btns"><button class="btn-green" data-copy="java" type="button">Server-IP kopieren</button><button class="btn-ghost" data-ics type="button">📅 Erinnerung</button></div>
           </div>
         </div>
 
@@ -459,7 +525,7 @@
       <img class="hero-char render" data-skin="Maxushky" data-pose="yaw=-28&arms=60&pitch=4" alt="">
       <div class="welcome-card">
         <h3>Heyho Minecraftfreund! 👋</h3>
-        <p>Willkommen auf CrystalSMP – Survival, Crystal-PvP, Clans und Duelle für Java und Bedrock. Am <b style="color:var(--yellow)">3. November 2026</b> ist großer Launch!</p>
+        <p>Willkommen auf CrystalSMP – Survival, Crystal-PvP, Clans und Duelle für Java und Bedrock. Am <b style="color:var(--yellow)">3. November 2026 um 16:30 Uhr</b> ist großer Launch!</p>
         <div class="online-now"><span class="dot" id="heroDot"></span><b id="heroCount">–</b><span>Spieler<br><span id="heroState">verbinde…</span></span></div>
         <a class="btn-green" href="#joinen">Wie kann ich spielen?</a>
       </div>
@@ -489,13 +555,13 @@
       <article class="ncard">
         <div class="scene" style="--sky1:#2a1758;--sky2:#7b3fd0;--glow:rgba(255,190,255,.7);--top:#7a5bd6;--top2:#5b3fb5;--dirt:#3b2a63;--dirt2:#21163d">
           <div class="stars"></div><div class="glow"></div><div class="ground"></div>
-          <div class="tags"><span class="tag-star">★ Empfohlen</span><span class="tag-date">03.11.2026</span></div>
+          <div class="tags"><span class="tag-star">★ Empfohlen</span><span class="tag-date">03.11. · 16:30</span></div>
           <div class="logo-text" style="left:8%;top:30%;font-size:34px">LAUNCH</div>
           <img class="char render" data-skin="Maxushky" data-pose="yaw=-30&arms=120" alt="" style="right:8%;height:82%">
         </div>
         <div class="body">
           <h4>Großer Server-Launch</h4>
-          <ul><li>Offizieller Start am 3. November</li><li>Neue Welt für alle</li><li>Java &amp; Bedrock zusammen</li></ul>
+          <ul><li>Offizieller Start am 3. November um 16:30 Uhr</li><li>Neue Welt für alle</li><li>Java &amp; Bedrock zusammen</li></ul>
           <a class="more" href="#start">Weiterlesen →</a>
         </div>
       </article>
@@ -578,6 +644,50 @@
       <div class="panel"><h4>Spieler – letzte Stunde <span id="chPlayersNow"></span></h4><svg id="chPlayers" viewBox="0 0 400 140" preserveAspectRatio="none"></svg><div class="axis"><span id="chFrom">–</span><span>jetzt</span></div></div>
       <div class="panel"><h4>Live-Feed <span>Joins, Kills, Käufe</span></h4><div class="feed" id="events"><div class="ev"><span class="txt" style="color:var(--muted)">Noch nichts passiert …</span></div></div></div>
     </div>
+  </section>
+
+
+  <!-- ================= Live-Karte ================= -->
+  <section id="karte">
+    <div class="sec-title">Live-Karte</div>
+    <p class="lead">Die ganze Welt von oben – mit allen Spielern, die gerade unterwegs sind. Zoomen mit dem Mausrad, Welt oben rechts wechseln.</p>
+    <div class="map-box reveal">
+      <iframe id="mapFrame" title="Live-Karte von CrystalSMP" loading="lazy" referrerpolicy="no-referrer"></iframe>
+      <div class="map-off" id="mapOff"><div><b>🗺️ Karte lädt …</b><span id="mapOffText">Die Live-Karte ist erreichbar, sobald der Server online ist.</span></div></div>
+      <a class="map-full" id="mapFull" target="_blank" rel="noopener" hidden>Vollbild ↗</a>
+    </div>
+  </section>
+
+  <!-- ================= Ranglisten + Profil ================= -->
+  <section id="ranglisten">
+    <div class="sec-title">Ranglisten</div>
+    <p class="lead">Die besten Spieler auf CrystalSMP – wird alle paar Minuten aktualisiert. Klick auf einen Namen für das Profil.</p>
+    <div class="lb-grid reveal">
+      <div class="panel lb">
+        <div class="tabs" id="lbTabs"></div>
+        <ol class="lb-list" id="lbList"><li class="lb-empty">Lade Ranglisten …</li></ol>
+      </div>
+      <div class="panel profile">
+        <form class="search" id="searchForm" autocomplete="off">
+          <input id="searchInput" list="nameList" placeholder="Spielername suchen …" aria-label="Spielername">
+          <datalist id="nameList"></datalist>
+          <button class="btn-green" type="submit">Suchen</button>
+        </form>
+        <div id="profile" class="prof-empty">Such einen Spieler, um Skin, Statistiken und Rang zu sehen.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Team + Discord ================= -->
+  <section id="team">
+    <div class="sec-title">Das Team</div>
+    <p class="lead">Diese Leute kümmern sich um den Server. Fragen? Schreib uns im Spiel oder auf Discord.</p>
+    <div class="team-grid reveal" id="teamGrid"><div class="empty">Lade Team …</div></div>
+    <a class="discord reveal" id="discordCard" target="_blank" rel="noopener" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3l-.6 1.3a18.4 18.4 0 0 0-5.6 0L8.6 3a19.7 19.7 0 0 0-4.9 1.5C.6 9.1-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3l1.3-2a13 13 0 0 1-2-1l.5-.4a14.2 14.2 0 0 0 12.2 0l.5.4-2 1 1.3 2a19.8 19.8 0 0 0 6-3c.5-5.2-.9-9.7-3.6-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.8 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></svg>
+      <div><b>Tritt unserem Discord bei</b><span>News, Events, Support und Giveaways</span></div>
+      <span class="discord-btn">Beitreten →</span>
+    </a>
   </section>
 
   <!-- ================= Spielmodi ================= -->
@@ -713,7 +823,7 @@
       </div>
       <div>
         <div class="sec-title">Fragen</div>
-        <details><summary>Wann startet der Server offiziell?</summary><p>Am 3. November 2026. Bis dahin kannst du schon reinschauen – der Countdown oben zeigt, wie lange es noch dauert.</p></details>
+        <details><summary>Wann startet der Server offiziell?</summary><p>Am 3. November 2026 um 16:30 Uhr. Bis dahin kannst du schon reinschauen – der Countdown oben zeigt, wie lange es noch dauert.</p></details>
         <details><summary>Brauche ich Mods?</summary><p>Nein. Auf Java lädt das Resourcepack beim Joinen automatisch, auf Bedrock brauchst du gar nichts.</p></details>
         <details><summary>Kann ich mit Bedrock und Java zusammen spielen?</summary><p>Ja. Alle spielen auf derselben Welt, egal ob PC, Handy oder Tablet.</p></details>
         <details><summary>Welche Version brauche ich?</summary><p>Java: 1.21.4 oder neuer. Bedrock: die aktuelle Version aus dem App Store.</p></details>
@@ -730,12 +840,13 @@
       <img class="char render hide-s" data-skin="Maxushky" data-pose="yaw=-35&arms=140" alt="" style="right:4%;height:84%">
     </div>
     <div class="cta-box">
-      <h2>Sei am 3.11. dabei!</h2>
+      <h2>Sei am 3.11. um 16:30 dabei!</h2>
       <p>Füg den Server jetzt schon hinzu – dann bist du beim Launch sofort drin.</p>
       <div class="cta-btns">
         <button class="mc-btn" data-copy="java" type="button">Java: <span class="java-addr">crystalsmp-mc.dns.navy</span></button>
         <button class="mc-btn" data-copy="bedrock" type="button">Bedrock: <span class="bedrock-addr">vivo-maine.tun.ply.gg:25940</span></button>
       </div>
+      <button class="btn-ghost" data-ics type="button" style="margin-top:12px">📅 Launch in meinen Kalender</button>
     </div>
   </div>
 
@@ -749,7 +860,7 @@
   <div class="wrap foot">
     <div>
       <a class="brand" href="#start" style="margin-bottom:10px"><div class="shield"><span><img src="img/end_crystal.png" alt=""></span></div><div class="brand-name" style="color:#fff">CRYSTALSMP</div></a>
-      <p>Survival, Crystal-PvP, Clans und Duelle für Java und Bedrock. Launch am 3. November 2026.</p>
+      <p>Survival, Crystal-PvP, Clans und Duelle für Java und Bedrock. Launch am 3. November 2026 um 16:30 Uhr.</p>
     </div>
     <div>
       <h5>Server</h5>
@@ -772,7 +883,7 @@
 (() => {
   const $ = id => document.getElementById(id);
   const key = new URLSearchParams(location.search).get('key');
-  const LAUNCH = new Date('2026-11-03T00:00:00+01:00');
+  const LAUNCH = new Date('2026-11-03T16:30:00+01:00');
   const addr = { java: 'crystalsmp-mc.dns.navy', bedrock: 'vivo-maine.tun.ply.gg:25940', rangshop: '/rangshop' };
 
   // ---------- 3D-Skins (NMSR), mit Ersatz-Render falls der Dienst nicht antwortet ----------
@@ -852,6 +963,7 @@
     const diff = LAUNCH - Date.now();
     if (diff <= 0) {
       document.querySelector('.countdown').replaceChildren(el('div', null, '🎉 Wir sind live!'));
+      if (tickCountdown.h) { confetti(8000); launchState(); }
       clearInterval(tickCountdown.h);
       return;
     }
@@ -872,7 +984,7 @@
   const spy = new IntersectionObserver(entries => entries.forEach(e => {
     if (e.isIntersecting) navLinks.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
   }), { rootMargin: '-45% 0px -50% 0px' });
-  ['start', 'spielmodi', 'live', 'joinen', 'regeln'].forEach(id => { const s = $(id); if (s) spy.observe(s); });
+  ['start', 'spielmodi', 'live', 'karte', 'ranglisten', 'joinen', 'regeln'].forEach(id => { const s = $(id); if (s) spy.observe(s); });
 
   // ---------- Live-Status ----------
   function setDigits(n) {
@@ -891,7 +1003,7 @@
     document.querySelectorAll('.bedrock-addr').forEach(e => e.textContent = addr.bedrock);
   }
   function renderStatus(s) {
-    document.title = `CrystalSMP · ${s.online} online · Launch 3.11.2026`;
+    document.title = `CrystalSMP · ${s.online} online · Launch 3.11. 16:30`;
     setAddresses(s);
     $('count').textContent = s.online; $('max').textContent = s.max;
     $('heroCount').textContent = s.online; $('footOnline').textContent = s.online;
@@ -903,6 +1015,8 @@
     $('uptime').textContent = fmtUptime(s.uptime);
     $('version').textContent = 'Minecraft ' + s.version;
     $('peak').textContent = s.peak;
+    setDiscord(s.discord);
+    setupMap(s.map);
     $('footTime').textContent = 'Stand ' + fmtTime(s.time);
     renderPlayers(s.players);
     renderChart(s.history);
@@ -980,6 +1094,122 @@
     }));
   }
 
+
+  // ---------- Launch-Party: Banner, Konfetti, Kalender ----------
+  function launchState() {
+    const now = Date.now(), t = LAUNCH.getTime();
+    const sameDay = new Date().toDateString() === LAUNCH.toDateString();
+    if (now >= t && now - t < 2 * 86400000) { $('launchBannerText').textContent = 'CrystalSMP ist live!'; $('launchBanner').hidden = false; }
+    else if (sameDay) { $('launchBannerText').textContent = 'Heute um 16:30 Uhr ist Launch!'; $('launchBanner').hidden = false; }
+  }
+  launchState();
+  function confetti(ms) {
+    const c = $('confetti'), x = c.getContext('2d');
+    c.style.display = 'block';
+    const W = c.width = innerWidth, H = c.height = innerHeight;
+    const colors = ['#a66bff', '#ff6bd6', '#ffb36b', '#5ee7ff', '#4ade80', '#ffd34d'];
+    const bits = Array.from({ length: 220 }, () => ({ x: Math.random() * W, y: -20 - Math.random() * H, r: 4 + Math.random() * 6,
+      vx: -2 + Math.random() * 4, vy: 2 + Math.random() * 4, a: Math.random() * 6, va: -.2 + Math.random() * .4, c: colors[Math.random() * colors.length | 0] }));
+    const end = Date.now() + ms;
+    (function frame() {
+      x.clearRect(0, 0, W, H);
+      bits.forEach(b => { b.x += b.vx; b.y += b.vy; b.a += b.va; if (b.y > H + 20 && Date.now() < end) { b.y = -20; b.x = Math.random() * W; }
+        x.save(); x.translate(b.x, b.y); x.rotate(b.a); x.fillStyle = b.c; x.fillRect(-b.r / 2, -b.r / 4, b.r, b.r / 2); x.restore(); });
+      if (Date.now() < end + 3000) requestAnimationFrame(frame); else c.style.display = 'none';
+    })();
+  }
+  // Am Launch-Tag (nach 16:30) einmal pro Besuch Konfetti
+  if (Date.now() >= LAUNCH.getTime() && Date.now() - LAUNCH.getTime() < 86400000) setTimeout(() => confetti(5000), 800);
+  function downloadIcs() {
+    const stamp = d => d.toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+    const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CrystalSMP//Launch//DE', 'BEGIN:VEVENT',
+      'UID:launch-2026@crystalsmp', 'DTSTAMP:' + stamp(new Date()), 'DTSTART:' + stamp(LAUNCH), 'DTEND:' + stamp(new Date(LAUNCH.getTime() + 3 * 3600000)),
+      'SUMMARY:CrystalSMP Launch', 'DESCRIPTION:Java: ' + addr.java + ' – Bedrock: ' + addr.bedrock, 'LOCATION:' + addr.java,
+      'BEGIN:VALARM', 'TRIGGER:-PT15M', 'ACTION:DISPLAY', 'DESCRIPTION:CrystalSMP startet gleich!', 'END:VALARM',
+      'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const a = el('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); a.download = 'CrystalSMP-Launch.ics'; a.click();
+    toast('Kalender-Termin heruntergeladen');
+  }
+  document.querySelectorAll('[data-ics]').forEach(b => b.addEventListener('click', downloadIcs));
+
+  // ---------- Live-Karte ----------
+  function setupMap(hasMap) {
+    if (!API && GH) return;
+    if (!hasMap) { $('mapOffText').textContent = 'Die Live-Karte ist gerade nicht verfügbar.'; return; }
+    const url = API + '/map/';
+    if ($('mapFrame').dataset.src === url) return;
+    $('mapFrame').dataset.src = url;
+    $('mapFrame').src = url;
+    $('mapFrame').onload = () => { $('mapOff').style.display = 'none'; };
+    $('mapFull').href = url; $('mapFull').hidden = false;
+  }
+
+  // ---------- Ranglisten, Profil, Team ----------
+  const head = (uuid, size) => `https://mc-heads.net/avatar/${uuid}/${size}`;
+  let boards = [], boardId = 'elo';
+  function renderBoard() {
+    $('lbTabs').replaceChildren(...boards.map(b => { const t = el('button', b.id === boardId ? 'on' : '', b.title); t.type = 'button'; t.onclick = () => { boardId = b.id; renderBoard(); }; return t; }));
+    const b = boards.find(x => x.id === boardId) || boards[0];
+    if (!b || !b.rows.length) { $('lbList').replaceChildren(el('li', 'lb-empty', 'Noch keine Einträge – nach dem Launch geht es los!')); return; }
+    $('lbList').replaceChildren(...b.rows.map(r => {
+      const li = el('li'); const img = el('img'); img.src = head(r.uuid, 64); img.alt = ''; img.loading = 'lazy';
+      li.append(img, el('span', 'n', r.name), el('span', 'v', r.value.toLocaleString('de-DE')));
+      li.title = b.unit; li.onclick = () => showProfile(r.name);
+      return li;
+    }));
+  }
+  async function loadBoards() {
+    try {
+      const d = await (await fetch(API + '/api/leaderboard', { cache: 'no-store' })).json();
+      boards = d.boards || [];
+      if (!boards.find(b => b.id === boardId) && boards[0]) boardId = boards[0].id;
+      renderBoard();
+      $('nameList').replaceChildren(...(d.names || []).map(n => { const o = el('option'); o.value = n; return o; }));
+    } catch { $('lbList').replaceChildren(el('li', 'lb-empty', 'Ranglisten sind erreichbar, sobald der Server online ist.')); }
+  }
+  const ago = t => { const m = Math.round((Date.now() - t) / 60000); return m < 2 ? 'gerade eben' : m < 60 ? `vor ${m} Min.` : m < 1440 ? `vor ${Math.round(m / 60)} Std.` : `vor ${Math.round(m / 1440)} Tagen`; };
+  async function showProfile(name) {
+    const box = $('profile');
+    box.className = 'prof-empty'; box.textContent = 'Suche …';
+    if (window.innerWidth < 960) box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    try {
+      const p = await (await fetch(API + '/api/player?name=' + encodeURIComponent(name), { cache: 'no-store' })).json();
+      if (p.error) { box.textContent = `„${name}“ war noch nie auf CrystalSMP.`; return; }
+      box.className = 'prof'; box.replaceChildren();
+      const img = el('img', 'render'); img.alt = p.name;
+      const skin = p.bedrock ? 'MHF_Steve' : p.uuid.replace(/-/g, '');
+      img.src = `https://nmsr.nickac.dev/fullbody/${skin}?yaw=-25&arms=40&width=300`;
+      img.onerror = () => { img.onerror = null; img.src = `https://mc-heads.net/body/${p.bedrock ? 'MHF_Steve' : p.uuid}/200`; };
+      const info = el('div'); const h3 = el('h3', null, p.name);
+      if (p.online) h3.append(el('span', 'on-pill', 'ONLINE'));
+      const meta = el('div', 'meta', `${p.bedrock ? 'Bedrock' : 'Java'} · dabei seit ${new Date(p.firstJoin).toLocaleDateString('de-DE')} · ${p.online ? 'gerade online' : 'zuletzt ' + ago(p.lastSeen)}`);
+      const kv = el('div', 'kv');
+      [['Elo', p.elo], ['Kills', p.kills], ['K/D', p.kd.toLocaleString('de-DE')], ['Siege', p.wins], ['Spielzeit', p.hours.toLocaleString('de-DE') + ' h'], ['Geld', p.money.toLocaleString('de-DE') + ' $']]
+        .forEach(([k, v]) => { const d = el('div'); d.append(el('b', null, String(v)), el('span', null, k)); kv.append(d); });
+      info.append(h3, meta, kv);
+      box.append(img, info);
+    } catch { box.textContent = 'Profile sind erreichbar, sobald der Server online ist.'; }
+  }
+  $('searchForm').addEventListener('submit', e => { e.preventDefault(); const n = $('searchInput').value.trim(); if (n) showProfile(n); });
+  async function loadTeam() {
+    try {
+      const d = await (await fetch(API + '/api/team', { cache: 'no-store' })).json();
+      if (!d.team || !d.team.length) return;
+      $('teamGrid').replaceChildren(...d.team.map((m, i) => {
+        const c = el('div', 'member'); const img = el('img', 'render'); img.alt = m.name; img.loading = 'lazy';
+        img.src = `https://nmsr.nickac.dev/fullbody/${m.uuid.replace(/-/g, '')}?yaw=${i % 2 ? 25 : -25}&arms=30&width=200`;
+        img.onerror = () => { img.onerror = null; img.src = `https://mc-heads.net/body/${m.uuid}/120`; };
+        const r = el('span', null, m.rank); r.style.color = m.rankColor;
+        c.append(img, el('b', null, m.name), r);
+        return c;
+      }));
+    } catch {}
+  }
+  function setDiscord(link) {
+    if (!link) return;
+    $('discordCard').href = link; $('discordCard').hidden = false;
+  }
+
   // ---------- Live-Schleifen ----------
   async function pollStatus() {
     try {
@@ -1032,6 +1262,8 @@
     pollStatus(); pollEvents();
     setInterval(pollStatus, 1000);
     setInterval(pollEvents, 3000);
+    loadBoards(); loadTeam();
+    setInterval(loadBoards, 120000); setInterval(loadTeam, 300000);
     // Admin-Bereich nur direkt am Server-PC (nicht ueber GitHub/Tunnel)
     if (key && !GH) pollAdmin().then(ok => { if (ok) setInterval(pollAdmin, 2000); });
   });
